@@ -1,0 +1,1982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>No Permission — The Business Podcast for Bold Builders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --bg-darkest:   #0D0D0D;
+      --bg-dark:      #111111;
+      --bg-mid:       #1A1A1A;
+      --bg-raised:    #222222;
+      --bg-card:      #1E1E1E;
+
+      --ember-deep:   #C94B0C;
+      --ember-core:   #E85D04;
+      --ember-bright: #F48C06;
+      --ember-hot:    #FF6B35;
+      --ember-glow:   rgba(232, 93, 4, 0.15);
+      --ember-glow-strong: rgba(232, 93, 4, 0.35);
+
+      --text-primary:   #F5F5F5;
+      --text-secondary: #A0A0A0;
+      --text-muted:     #5A5A5A;
+      --text-ember:     #F48C06;
+
+      --border-subtle:  rgba(255,255,255,0.06);
+      --border-ember:   rgba(232,93,4,0.4);
+
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'Inter', sans-serif;
+
+      --transition-slide: 700ms cubic-bezier(0.77, 0, 0.175, 1);
+      --transition-fast:  200ms ease;
+      --transition-mid:   400ms ease;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--bg-darkest);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ============================================================
+       PRESENTATION SHELL
+    ============================================================ */
+    #deck {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* Progress bar */
+    #progress-bar {
+      position: fixed;
+      bottom: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--ember-deep), var(--ember-hot));
+      transition: width var(--transition-mid);
+      z-index: 100;
+      box-shadow: 0 0 12px var(--ember-core), 0 0 24px var(--ember-glow);
+    }
+
+    /* Slide counter */
+    #slide-counter {
+      position: fixed;
+      bottom: 18px;
+      right: 24px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      z-index: 100;
+      user-select: none;
+    }
+    #slide-counter span { color: var(--text-ember); }
+
+    /* Navigation buttons */
+    #nav-prev, #nav-next {
+      position: fixed;
+      bottom: 12px;
+      z-index: 100;
+      background: none;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition-fast);
+      font-size: 14px;
+    }
+    #nav-prev { left: 24px; }
+    #nav-next { left: 68px; }
+    #nav-prev:hover, #nav-next:hover {
+      border-color: var(--ember-core);
+      color: var(--ember-hot);
+      background: var(--ember-glow);
+      box-shadow: 0 0 16px var(--ember-glow);
+    }
+
+    /* ============================================================
+       SLIDES
+    ============================================================ */
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateX(60px);
+      transition: opacity var(--transition-slide), transform var(--transition-slide);
+      pointer-events: none;
+      overflow: hidden;
+      padding: 60px 80px 60px;
+    }
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+    .slide.exit {
+      opacity: 0;
+      transform: translateX(-60px);
+      pointer-events: none;
+    }
+
+    /* ============================================================
+       SHARED COMPONENTS
+    ============================================================ */
+    .ember-line {
+      display: block;
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--ember-deep), var(--ember-hot));
+      border-radius: 2px;
+      box-shadow: 0 0 10px var(--ember-core);
+      margin: 0 auto;
+    }
+
+    .ember-line--left { margin: 0; }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ember-hot);
+      padding: 4px 12px;
+      border: 1px solid var(--border-ember);
+      border-radius: 2px;
+      background: rgba(232,93,4,0.08);
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ember-core);
+      margin-bottom: 16px;
+    }
+
+    h1.display {
+      font-family: var(--font-display);
+      font-size: clamp(80px, 10vw, 140px);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+    }
+
+    h2.display {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 6vw, 90px);
+      line-height: 0.95;
+      letter-spacing: 0.03em;
+      color: var(--text-primary);
+    }
+
+    h3.display {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 4vw, 58px);
+      line-height: 1;
+      letter-spacing: 0.03em;
+      color: var(--text-primary);
+    }
+
+    .ember-text {
+      color: var(--ember-bright);
+    }
+
+    /* Glow orb ambient */
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Card base */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 28px 24px;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .card:hover {
+      border-color: var(--border-ember);
+      box-shadow: 0 0 24px var(--ember-glow);
+    }
+
+    /* ============================================================
+       SLIDE 1 — HERO
+    ============================================================ */
+    #slide-1 {
+      background: var(--bg-darkest);
+      text-align: center;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    /* Ember graphic — stacked arcs / flame shape */
+    .ember-flame {
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .hero-podcast-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ember-core);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(100px, 14vw, 200px);
+      line-height: 0.85;
+      letter-spacing: 0.06em;
+      color: var(--text-primary);
+      text-shadow:
+        0 0 60px rgba(232,93,4,0.25),
+        0 0 120px rgba(201,75,12,0.15);
+    }
+
+    .hero-tagline {
+      font-size: clamp(14px, 1.8vw, 20px);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .hero-divider {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      width: 320px;
+    }
+    .hero-divider::before,
+    .hero-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--ember-deep));
+    }
+    .hero-divider::after {
+      background: linear-gradient(90deg, var(--ember-deep), transparent);
+    }
+    .hero-divider-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ember-core);
+      box-shadow: 0 0 12px var(--ember-core);
+    }
+
+    .hero-ep-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      border: 1px solid var(--border-subtle);
+      padding: 8px 18px;
+      border-radius: 40px;
+    }
+    .hero-ep-badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--ember-hot);
+      box-shadow: 0 0 8px var(--ember-hot);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(0.8); }
+    }
+
+    /* ============================================================
+       SLIDE 2 — ABOUT
+    ============================================================ */
+    #slide-2 {
+      background: var(--bg-dark);
+      align-items: flex-start;
+    }
+
+    .about-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-left { display: flex; flex-direction: column; gap: 24px; }
+    .about-right { display: flex; flex-direction: column; gap: 20px; }
+
+    .about-headline {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 7vw, 96px);
+      line-height: 0.9;
+      letter-spacing: 0.03em;
+    }
+
+    .about-mission {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 420px;
+    }
+
+    .pillar {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 24px;
+      background: var(--bg-mid);
+      border-left: 3px solid var(--ember-core);
+      border-radius: 0 6px 6px 0;
+    }
+    .pillar-num {
+      font-family: var(--font-display);
+      font-size: 40px;
+      line-height: 1;
+      color: var(--ember-deep);
+      min-width: 40px;
+    }
+    .pillar-body { display: flex; flex-direction: column; gap: 4px; }
+    .pillar-name {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+    }
+    .pillar-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       SLIDE 3 — WHO IT'S FOR
+    ============================================================ */
+    #slide-3 {
+      background: var(--bg-darkest);
+    }
+
+    .who-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 52px;
+      text-align: center;
+    }
+
+    .who-header { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+
+    .audience-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 40px 24px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      transition: all var(--transition-mid);
+    }
+    .audience-card:hover {
+      border-color: var(--border-ember);
+      background: var(--bg-mid);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px var(--ember-glow);
+    }
+
+    .audience-icon {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ember-deep), var(--ember-core));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 24px var(--ember-glow-strong);
+    }
+
+    .audience-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+    }
+
+    .audience-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    /* ============================================================
+       SLIDE 6 — WHAT WE COVER
+    ============================================================ */
+    #slide-4 {
+      background: var(--bg-dark);
+    }
+
+    .covers-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 44px;
+    }
+
+    .covers-header { display: flex; flex-direction: column; gap: 16px; }
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .topic-card {
+      background: var(--bg-mid);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 28px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: all var(--transition-fast);
+    }
+    .topic-card:hover {
+      border-color: var(--border-ember);
+      background: var(--bg-raised);
+      box-shadow: 0 0 24px var(--ember-glow);
+    }
+
+    .topic-icon {
+      font-size: 28px;
+      min-width: 40px;
+      text-align: center;
+      filter: drop-shadow(0 0 8px var(--ember-core));
+    }
+
+    .topic-body { display: flex; flex-direction: column; gap: 4px; }
+    .topic-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .topic-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ============================================================
+       SLIDE 6 — FORMAT
+    ============================================================ */
+    #slide-5 {
+      background: var(--bg-darkest);
+    }
+
+    .format-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .format-left { display: flex; flex-direction: column; gap: 28px; }
+    .format-right { display: flex; flex-direction: column; gap: 20px; }
+
+    .format-stat-row {
+      display: flex;
+      gap: 24px;
+    }
+
+    .format-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 20px 24px;
+      background: var(--bg-mid);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      flex: 1;
+    }
+    .format-stat-value {
+      font-family: var(--font-display);
+      font-size: 48px;
+      line-height: 1;
+      color: var(--ember-bright);
+    }
+    .format-stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .format-type {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      border-left: 3px solid var(--ember-core);
+    }
+    .format-type-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ember-hot);
+    }
+    .format-type-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .format-type-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       SLIDE 6 — WHY LISTEN
+    ============================================================ */
+    #slide-6 {
+      background: var(--bg-dark);
+    }
+
+    .why-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 52px;
+      text-align: center;
+    }
+
+    .why-header { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+    .stats-row {
+      display: flex;
+      gap: 2px;
+      width: 100%;
+    }
+
+    .stat-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 36px 20px;
+      background: var(--bg-mid);
+      border-top: 3px solid transparent;
+      border-image: linear-gradient(90deg, var(--ember-deep), var(--ember-hot)) 1;
+      transition: background var(--transition-fast);
+    }
+    .stat-block:first-child { border-radius: 8px 0 0 8px; }
+    .stat-block:last-child  { border-radius: 0 8px 8px 0; }
+    .stat-block:hover { background: var(--bg-raised); }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 5vw, 64px);
+      line-height: 1;
+      color: var(--ember-bright);
+    }
+    .stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .differentiators {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+    }
+    .diff-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+    }
+    .diff-icon {
+      width: 32px; height: 32px; min-width: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--ember-deep), var(--ember-core));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .diff-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .why-cta {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 3vw, 42px);
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+    .why-cta span {
+      color: var(--ember-bright);
+    }
+
+    /* ============================================================
+       SLIDE 7 — GUEST SPOTLIGHT
+    ============================================================ */
+    #slide-7 {
+      background: var(--bg-darkest);
+    }
+
+    .guest-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .guest-card-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .guest-card-top {
+      background: linear-gradient(135deg, var(--ember-deep) 0%, var(--bg-mid) 100%);
+      border-radius: 10px 10px 0 0;
+      padding: 32px 28px 28px;
+      border: 1px solid var(--border-ember);
+      border-bottom: none;
+    }
+    .guest-week-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 20px;
+    }
+    .guest-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--bg-raised);
+      border: 2px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 32px;
+      color: var(--ember-hot);
+      margin-bottom: 16px;
+    }
+    .guest-name {
+      font-family: var(--font-display);
+      font-size: 36px;
+      letter-spacing: 0.04em;
+      color: white;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .guest-title-co {
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      font-weight: 500;
+    }
+    .guest-title-co strong { color: white; }
+
+    .guest-card-bottom {
+      background: var(--bg-card);
+      border-radius: 0 0 10px 10px;
+      padding: 24px 28px;
+      border: 1px solid var(--border-subtle);
+      border-top: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .guest-topic-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ember-core);
+    }
+    .guest-topic-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .guest-ep-num {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .guest-right { display: flex; flex-direction: column; gap: 28px; }
+    .guest-right-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ember-core);
+    }
+
+    .guest-headline {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 5vw, 70px);
+      line-height: 0.92;
+      letter-spacing: 0.03em;
+    }
+
+    .guest-about-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      max-width: 480px;
+    }
+
+    .guest-bullets {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .guest-bullet {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .guest-bullet::before {
+      content: '';
+      display: block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ember-core);
+      box-shadow: 0 0 8px var(--ember-core);
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       SLIDE 8 — CONNECT & SUBSCRIBE
+    ============================================================ */
+    #slide-8 {
+      background: var(--bg-dark);
+    }
+
+    .connect-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 48px;
+      text-align: center;
+    }
+
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 760px;
+    }
+
+    .platform-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 32px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      transition: all var(--transition-mid);
+    }
+    .platform-card:hover {
+      border-color: var(--border-ember);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 24px var(--ember-glow);
+    }
+    .platform-icon {
+      font-size: 36px;
+      filter: drop-shadow(0 0 8px rgba(255,107,53,0.4));
+    }
+    .platform-name {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
+    }
+    .platform-handle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .social-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .social-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--bg-mid);
+      border: 1px solid var(--border-subtle);
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: all var(--transition-fast);
+    }
+    .social-pill:hover {
+      border-color: var(--border-ember);
+      color: var(--ember-hot);
+    }
+    .social-pill-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ember-core);
+    }
+
+    .connect-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .cta-line {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 52px);
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+    }
+    .cta-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--ember-deep), var(--ember-core));
+      color: white;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 4px 24px rgba(232,93,4,0.4);
+      transition: all var(--transition-fast);
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(232,93,4,0.6);
+    }
+
+    /* ============================================================
+       SLIDE 9 — SPONSORSHIP
+    ============================================================ */
+    #slide-9 {
+      background: var(--bg-darkest);
+    }
+
+    .sponsor-layout {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .sponsor-left { display: flex; flex-direction: column; gap: 28px; }
+    .sponsor-right { display: flex; flex-direction: column; gap: 20px; }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .demo-stat {
+      background: var(--bg-mid);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .demo-value {
+      font-family: var(--font-display);
+      font-size: 36px;
+      line-height: 1;
+      color: var(--ember-bright);
+    }
+    .demo-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .sponsor-options { display: flex; flex-direction: column; gap: 12px; }
+    .sponsor-tier {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      transition: all var(--transition-fast);
+    }
+    .sponsor-tier:hover {
+      border-color: var(--border-ember);
+      background: var(--bg-mid);
+    }
+    .tier-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .tier-dot--gold { background: #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.4); }
+    .tier-dot--silver { background: #C0C0C0; box-shadow: 0 0 10px rgba(192,192,192,0.3); }
+    .tier-dot--bronze { background: var(--ember-core); box-shadow: 0 0 10px var(--ember-glow); }
+
+    .tier-info { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .tier-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .tier-desc { font-size: 12px; color: var(--text-muted); }
+    .tier-cta {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ember-core);
+    }
+
+    .contact-block {
+      padding: 24px;
+      background: var(--bg-mid);
+      border: 1px solid var(--border-ember);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .contact-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ember-core);
+    }
+    .contact-email {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      color: var(--text-primary);
+    }
+    .contact-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       SLIDE 10 — CLOSING
+    ============================================================ */
+    #slide-10 {
+      background: var(--bg-darkest);
+      text-align: center;
+    }
+
+    .closing-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .closing-glow-1 {
+      position: absolute;
+      bottom: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 900px; height: 500px;
+      background: radial-gradient(ellipse, rgba(201,75,12,0.25) 0%, transparent 70%);
+      filter: blur(40px);
+    }
+    .closing-glow-2 {
+      position: absolute;
+      top: -150px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse, rgba(255,107,53,0.08) 0%, transparent 70%);
+      filter: blur(60px);
+    }
+
+    .closing-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border-subtle) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, transparent 70%);
+    }
+
+    .closing-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .closing-pre {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--ember-core);
+    }
+
+    .closing-title {
+      font-family: var(--font-display);
+      font-size: clamp(80px, 16vw, 220px);
+      line-height: 0.85;
+      letter-spacing: 0.06em;
+      color: var(--text-primary);
+      text-shadow:
+        0 0 80px rgba(232,93,4,0.4),
+        0 0 160px rgba(201,75,12,0.2),
+        0 0 240px rgba(201,75,12,0.1);
+    }
+
+    .closing-sub {
+      font-size: clamp(12px, 1.5vw, 16px);
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .closing-site {
+      font-family: var(--font-display);
+      font-size: clamp(18px, 2.5vw, 30px);
+      letter-spacing: 0.12em;
+      color: var(--ember-bright);
+    }
+
+    .closing-socials {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .closing-social-item {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+    .closing-social-sep {
+      color: var(--ember-deep);
+      font-size: 10px;
+    }
+
+    .closing-ember-bar {
+      width: 200px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--ember-core), var(--ember-hot), var(--ember-core), transparent);
+      box-shadow: 0 0 16px var(--ember-core);
+    }
+
+    /* ============================================================
+       EMBER PARTICLE DECORATIONS (reusable)
+    ============================================================ */
+    .ember-particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: float-ember 6s ease-in-out infinite;
+    }
+
+    @keyframes float-ember {
+      0%   { transform: translateY(0) scale(1); opacity: 0.6; }
+      50%  { transform: translateY(-20px) scale(1.1); opacity: 0.3; }
+      100% { transform: translateY(0) scale(1); opacity: 0.6; }
+    }
+
+    /* ============================================================
+       SLIDE BACKGROUND ACCENTS
+    ============================================================ */
+    .bg-accent-corner {
+      position: absolute;
+      top: 0; right: 0;
+      width: 400px; height: 400px;
+      background: radial-gradient(ellipse at top right, rgba(201,75,12,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .bg-accent-bottom {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse at bottom left, rgba(201,75,12,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Horizontal rule with ember */
+    .ember-hr {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--ember-deep), var(--ember-core) 50%, transparent);
+      margin: 4px 0;
+    }
+
+    /* ============================================================
+       KEYWORD HIGHLIGHT CHIP
+    ============================================================ */
+    .kw {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(232,93,4,0.12);
+      border: 1px solid var(--border-ember);
+      border-radius: 3px;
+      color: var(--ember-hot);
+      font-weight: 700;
+    }
+
+  </style>
+</head>
+<body>
+
+<div id="deck">
+
+  <!-- ============================================================
+       SLIDE 1 — HERO
+  ============================================================ -->
+  <section class="slide active" id="slide-1">
+    <div class="hero-bg">
+      <!-- Radial glow from bottom center -->
+      <div style="position:absolute;bottom:-80px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(201,75,12,0.3) 0%,transparent 65%);filter:blur(30px);"></div>
+      <div style="position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(ellipse,rgba(201,75,12,0.06) 0%,transparent 70%);"></div>
+
+      <!-- Grid lines -->
+      <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at center,rgba(0,0,0,0.5) 0%,transparent 75%);"></div>
+
+      <!-- Ember SVG flame -->
+      <svg class="ember-flame" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="flameGrad1" cx="50%" cy="80%" r="60%">
+            <stop offset="0%" stop-color="#C94B0C" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#C94B0C" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="flameGrad2" cx="50%" cy="80%" r="50%">
+            <stop offset="0%" stop-color="#F48C06" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#F48C06" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="flameGrad3" cx="50%" cy="80%" r="35%">
+            <stop offset="0%" stop-color="#FF6B35" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#FF6B35" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- Outer glow arc -->
+        <ellipse cx="300" cy="520" rx="280" ry="200" fill="url(#flameGrad1)"/>
+        <!-- Mid glow -->
+        <ellipse cx="300" cy="520" rx="180" ry="130" fill="url(#flameGrad2)"/>
+        <!-- Core hot spot -->
+        <ellipse cx="300" cy="540" rx="80" ry="80" fill="url(#flameGrad3)"/>
+
+        <!-- Ember sparks -->
+        <circle cx="220" cy="350" r="3" fill="#FF6B35" opacity="0.8">
+          <animate attributeName="cy" values="350;290;350" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.8;0;0.8" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="310" cy="300" r="2" fill="#F48C06" opacity="0.7">
+          <animate attributeName="cy" values="300;230;300" dur="4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.7;0;0.7" dur="4s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="380" cy="370" r="2.5" fill="#E85D04" opacity="0.9">
+          <animate attributeName="cy" values="370;310;370" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.9;0;0.9" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="260" cy="320" r="1.5" fill="#FF6B35" opacity="0.6">
+          <animate attributeName="cy" values="320;260;320" dur="3.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.6;0;0.6" dur="3.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="340" cy="340" r="2" fill="#F48C06" opacity="0.75">
+          <animate attributeName="cy" values="340;280;340" dur="2.8s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.75;0;0.75" dur="2.8s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-podcast-label">— A Business Podcast —</div>
+
+      <div class="hero-title">NO<br>PERMISSION</div>
+
+      <div class="hero-divider"><div class="hero-divider-dot"></div></div>
+
+      <div class="hero-tagline">The Business Podcast for Bold Builders</div>
+
+      <div class="hero-ep-badge">
+        <div class="hero-ep-badge-dot"></div>
+        Now Playing · New Episodes Every Week
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 2 — ABOUT
+  ============================================================ -->
+  <section class="slide" id="slide-2">
+    <div class="bg-accent-corner"></div>
+    <div class="bg-accent-bottom"></div>
+
+    <div class="about-layout">
+      <div class="about-left">
+        <div class="section-label">About the Show</div>
+        <div class="about-headline">
+          Built<br>
+          <span class="ember-text">Different.</span><br>
+          Built Bold.
+        </div>
+        <div class="ember-line ember-line--left"></div>
+        <p class="about-mission">
+          No Permission is the no-BS business podcast built for people who build—not talk about building.
+          Every episode cuts through the noise to bring you raw insights, honest stories, and tactical
+          frameworks from founders who actually did the thing.
+        </p>
+        <p class="about-mission" style="margin-top:-8px;">
+          We don't gatekeep. We don't sugarcoat. We don't wait for anyone's approval.
+          And neither should you.
+        </p>
+      </div>
+
+      <div class="about-right">
+        <div class="pillar">
+          <div class="pillar-num">01</div>
+          <div class="pillar-body">
+            <div class="pillar-name">Real Talk</div>
+            <div class="pillar-desc">Unfiltered conversations about what it actually takes to build, fail, and win in business.</div>
+          </div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num">02</div>
+          <div class="pillar-body">
+            <div class="pillar-name">No Filters</div>
+            <div class="pillar-desc">We skip the highlight reel. The mistakes, the pivots, the hard lessons—all of it.</div>
+          </div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num">03</div>
+          <div class="pillar-body">
+            <div class="pillar-name">No Permission Needed</div>
+            <div class="pillar-desc">You don't need a title, a degree, or a co-sign. You just need the drive to start.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 3 — MEET YOUR HOST
+  ============================================================ -->
+  <section class="slide" id="slide-3">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(201,75,12,0.13) 0%,transparent 60%);pointer-events:none;z-index:0;"></div>
+    <div style="position:absolute;top:0;right:0;width:3px;height:100%;background:linear-gradient(180deg,transparent,#C94B0C,#E85D04,transparent);opacity:0.4;"></div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:80px;width:100%;max-width:1100px;margin:0 auto;padding:0 60px;position:relative;z-index:1;">
+
+      <!-- Left: Identity Card -->
+      <div style="flex:0 0 320px;">
+        <div style="background:linear-gradient(160deg,#1A1A1A 0%,#141414 100%);border:1px solid rgba(201,75,12,0.25);border-radius:16px;padding:40px 32px;text-align:center;">
+          <div style="width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,#C94B0C,#E85D04,#F48C06);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-family:'Bebas Neue',sans-serif;font-size:48px;color:#fff;letter-spacing:2px;">DD</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;color:#fff;line-height:1.1;margin-bottom:6px;">Daniel Druger</div>
+          <div style="font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#C94B0C;margin-bottom:20px;">Host · No Permission</div>
+          <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(201,75,12,0.5),transparent);margin-bottom:20px;"></div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+              <span style="color:#E85D04;font-size:14px;">◆</span>
+              <span style="font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;">Co-Host, ADSN</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+              <span style="color:#E85D04;font-size:14px;">◆</span>
+              <span style="font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;">Active Investor</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.06);">
+              <span style="color:#E85D04;font-size:14px;">◆</span>
+              <span style="font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;">Startup Advisor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Bio -->
+      <div style="flex:1;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#C94B0C;margin-bottom:14px;">Meet Your Host</div>
+        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,5.5vw,76px);letter-spacing:3px;line-height:1;margin:0 0 24px;color:#fff;">Built From the<br><span style="background:linear-gradient(90deg,#C94B0C,#F48C06);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Inside Out</span></h2>
+        <div style="width:50px;height:3px;background:linear-gradient(90deg,#C94B0C,#E85D04);border-radius:2px;margin-bottom:24px;"></div>
+        <p style="font-size:16px;color:rgba(255,255,255,0.72);line-height:1.8;margin:0 0 28px;">
+          Daniel Druger isn't talking about business from the sidelines. As co-host of <strong style="color:#fff;">ADSN</strong>, an active investor, and hands-on advisor to founders, Daniel brings real capital, real relationships, and real-world decisions to every conversation.
+        </p>
+        <p style="font-size:15px;color:rgba(255,255,255,0.55);line-height:1.75;margin:0 0 32px;">
+          No Permission exists because the best business lessons aren't found in books — they're found in the rooms most people can't get into. Daniel opens that door.
+        </p>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div style="padding:10px 22px;background:linear-gradient(135deg,#C94B0C,#E85D04);border-radius:8px;font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#fff;">Investor</div>
+          <div style="padding:10px 22px;background:rgba(255,255,255,0.06);border:1px solid rgba(201,75,12,0.3);border-radius:8px;font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.7);">Advisor</div>
+          <div style="padding:10px 22px;background:rgba(255,255,255,0.06);border:1px solid rgba(201,75,12,0.3);border-radius:8px;font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.7);">Operator</div>
+          <div style="padding:10px 22px;background:rgba(255,255,255,0.06);border:1px solid rgba(201,75,12,0.3);border-radius:8px;font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.7);">ADSN Co-Host</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 4 — WHO IT'S FOR
+  ============================================================ -->
+  <section class="slide" id="slide-4">
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:700px;height:700px;background:radial-gradient(ellipse,rgba(201,75,12,0.07) 0%,transparent 70%);pointer-events:none;z-index:0;"></div>
+
+    <div class="who-layout">
+      <div class="who-header">
+        <div class="section-label">The Audience</div>
+        <h2 class="display">Built for Founders<br><span class="ember-text">Who Don't Wait</span></h2>
+        <div class="ember-line"></div>
+      </div>
+
+      <div class="audience-grid">
+        <div class="audience-card">
+          <div class="audience-icon">🔥</div>
+          <div class="audience-title">Entrepreneurs</div>
+          <div class="audience-desc">First-time and serial founders in the trenches, building from zero with limited resources and unlimited ambition.</div>
+        </div>
+        <div class="audience-card">
+          <div class="audience-icon">⚙️</div>
+          <div class="audience-title">Operators</div>
+          <div class="audience-desc">COOs, GMs, and leaders running the engine inside fast-growing companies who need tactical, real-world frameworks.</div>
+        </div>
+        <div class="audience-card">
+          <div class="audience-icon">💡</div>
+          <div class="audience-title">Investors</div>
+          <div class="audience-desc">Angels, VCs, and allocators who want to understand what separates great founders from the rest.</div>
+        </div>
+        <div class="audience-card">
+          <div class="audience-icon">🏗️</div>
+          <div class="audience-title">Builders</div>
+          <div class="audience-desc">Engineers, marketers, and creatives turning ideas into products and careers into legacies—on their own terms.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 6 — WHAT WE COVER
+  ============================================================ -->
+  <section class="slide" id="slide-5">
+    <div class="bg-accent-corner"></div>
+
+    <div class="covers-layout">
+      <div class="covers-header">
+        <div class="section-label">Topics</div>
+        <h2 class="display">What We Cover</h2>
+        <div class="ember-hr" style="max-width:300px;"></div>
+        <p style="font-size:15px;color:var(--text-secondary);max-width:560px;line-height:1.6;">
+          Six high-signal domains. Every episode attacks one directly — with guests who've lived it and tactics you can use tomorrow.
+        </p>
+      </div>
+
+      <div class="topics-grid">
+        <div class="topic-card">
+          <div class="topic-icon">🏛️</div>
+          <div class="topic-body">
+            <div class="topic-name">Building Companies</div>
+            <div class="topic-sub">From idea to scale — the full arc</div>
+          </div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon">💰</div>
+          <div class="topic-body">
+            <div class="topic-name">Raising Capital</div>
+            <div class="topic-sub">Decks, rounds, terms, and leverage</div>
+          </div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon">📈</div>
+          <div class="topic-body">
+            <div class="topic-name">Marketing & Growth</div>
+            <div class="topic-sub">Acquisition, brand, and distribution</div>
+          </div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon">🧠</div>
+          <div class="topic-body">
+            <div class="topic-name">Leadership</div>
+            <div class="topic-sub">Vision, decision-making, and execution</div>
+          </div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon">🎯</div>
+          <div class="topic-body">
+            <div class="topic-name">Sales & Revenue</div>
+            <div class="topic-sub">Pipeline, process, and closing</div>
+          </div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-icon">👥</div>
+          <div class="topic-body">
+            <div class="topic-name">Culture & Team</div>
+            <div class="topic-sub">Hiring, retention, and values in action</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 6 — THE FORMAT
+  ============================================================ -->
+  <section class="slide" id="slide-6">
+    <div style="position:absolute;bottom:0;right:0;width:500px;height:400px;background:radial-gradient(ellipse at bottom right,rgba(201,75,12,0.1) 0%,transparent 65%);pointer-events:none;z-index:0;"></div>
+
+    <div class="format-layout">
+      <div class="format-left">
+        <div class="section-label">The Format</div>
+        <h2 class="display">How We<br>Deliver It</h2>
+        <div class="ember-line ember-line--left"></div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;">
+          Structured to be bingeable, bookmarkable, and immediately actionable.
+          No fluff. No sponsor reads dragging on for five minutes. Just signal.
+        </p>
+
+        <div class="format-stat-row">
+          <div class="format-stat">
+            <div class="format-stat-value">Weekly</div>
+            <div class="format-stat-label">Release Cadence</div>
+          </div>
+          <div class="format-stat">
+            <div class="format-stat-value">45–60</div>
+            <div class="format-stat-label">Minutes per Episode</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="format-right" style="padding-top:12px;">
+        <div class="format-type">
+          <div class="format-type-tag">Format 01</div>
+          <div class="format-type-name">Solo Deep-Dives</div>
+          <div class="format-type-desc">Host-driven tactical breakdowns on a single business topic. No guest needed — just raw frameworks and hard-won knowledge delivered with zero filler.</div>
+        </div>
+        <div class="format-type">
+          <div class="format-type-tag">Format 02</div>
+          <div class="format-type-name">Guest Interviews</div>
+          <div class="format-type-desc">Long-form conversations with founders, operators, and investors who've built, broken, and rebuilt. Prepared questions. Unprepared honesty.</div>
+        </div>
+        <div class="format-type">
+          <div class="format-type-tag">Format 03</div>
+          <div class="format-type-name">Tactical Deep-Dives</div>
+          <div class="format-type-desc">Step-by-step breakdowns of a specific strategy, tool, or system. Walk away with a playbook you can run the next day.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 6 — WHY LISTEN
+  ============================================================ -->
+  <section class="slide" id="slide-7">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,75,12,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;"></div>
+
+    <div class="why-layout">
+      <div class="why-header">
+        <div class="section-label">Why No Permission</div>
+        <h2 class="display">The Numbers<br><span class="ember-text">Speak First</span></h2>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-block">
+          <div class="stat-value">50K+</div>
+          <div class="stat-label">Monthly Listeners</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-value">Top 5%</div>
+          <div class="stat-label">Business Podcasts</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-value">92%</div>
+          <div class="stat-label">Listener Retention</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-value">100+</div>
+          <div class="stat-label">Episodes Published</div>
+        </div>
+      </div>
+
+      <div class="differentiators">
+        <div class="diff-item">
+          <div class="diff-icon">⚡</div>
+          <div class="diff-text">Zero filler. Every minute earns its place.</div>
+        </div>
+        <div class="diff-item">
+          <div class="diff-icon">🔓</div>
+          <div class="diff-text">No gatekeeping. Knowledge shared openly.</div>
+        </div>
+        <div class="diff-item">
+          <div class="diff-icon">🎯</div>
+          <div class="diff-text">Tactical. Not theoretical. Not aspirational.</div>
+        </div>
+      </div>
+
+      <div class="why-cta">
+        No fluff. No gatekeeping. <span>No Permission.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 7 — GUEST SPOTLIGHT
+  ============================================================ -->
+  <section class="slide" id="slide-8">
+    <div class="bg-accent-corner"></div>
+
+    <div class="guest-layout">
+      <div class="guest-card-wrapper">
+        <div class="guest-card-top">
+          <div class="guest-week-label">This Week's Guest</div>
+          <div class="guest-avatar">G</div>
+          <div class="guest-name">Guest Name</div>
+          <div class="guest-title-co"><strong>Title</strong> · Company Name</div>
+        </div>
+        <div class="guest-card-bottom">
+          <div class="guest-topic-label">Episode Topic</div>
+          <div class="guest-topic-text">The tactical framework this guest used to scale from $0 to $10M ARR in under two years.</div>
+          <div class="guest-ep-num">Episode 101 · 52 min</div>
+        </div>
+      </div>
+
+      <div class="guest-right">
+        <div class="guest-right-label">Guest Spotlight</div>
+        <div class="guest-headline">
+          Real People.<br>
+          <span class="ember-text">Real Receipts.</span>
+        </div>
+        <div class="ember-line ember-line--left"></div>
+        <p class="guest-about-text">
+          Every guest on No Permission has built something real. No paid consultants.
+          No influencers with a course to sell. Just operators and founders with scars,
+          stories, and the specific insights that come from doing — not watching.
+        </p>
+        <div class="guest-bullets">
+          <div class="guest-bullet">Guests are vetted by operational track record, not follower count</div>
+          <div class="guest-bullet">Pre-interviews ensure depth and specificity in every conversation</div>
+          <div class="guest-bullet">Episodes are edited for clarity — zero filler retained in final cut</div>
+          <div class="guest-bullet">All guests receive a full promotional package after release</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 8 — CONNECT & SUBSCRIBE
+  ============================================================ -->
+  <section class="slide" id="slide-9">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center bottom,rgba(201,75,12,0.1) 0%,transparent 60%);pointer-events:none;z-index:0;"></div>
+
+    <div class="connect-layout">
+      <div>
+        <div class="section-label" style="margin-bottom:12px;">Listen Everywhere</div>
+        <h2 class="display" style="font-size:clamp(40px,5.5vw,80px);">Find Us On<br><span class="ember-text">Every Platform</span></h2>
+      </div>
+
+      <div class="platforms-grid">
+        <div class="platform-card">
+          <div class="platform-icon">🎵</div>
+          <div class="platform-name">Spotify</div>
+          <div class="platform-handle">@nopermissionpod</div>
+        </div>
+        <div class="platform-card">
+          <div class="platform-icon">🎙️</div>
+          <div class="platform-name">Apple Podcasts</div>
+          <div class="platform-handle">Search "No Permission"</div>
+        </div>
+        <div class="platform-card">
+          <div class="platform-icon">▶️</div>
+          <div class="platform-name">YouTube</div>
+          <div class="platform-handle">@NoPermissionShow</div>
+        </div>
+      </div>
+
+      <div class="social-row">
+        <div class="social-pill"><div class="social-pill-dot"></div>Instagram · @nopermissionpod</div>
+        <div class="social-pill"><div class="social-pill-dot"></div>X / Twitter · @nopermissionpod</div>
+        <div class="social-pill"><div class="social-pill-dot"></div>LinkedIn · No Permission Podcast</div>
+        <div class="social-pill"><div class="social-pill-dot"></div>TikTok · @nopermissionpod</div>
+      </div>
+
+      <div class="connect-cta">
+        <div class="cta-line">Start Listening.</div>
+        <div class="cta-line"><span class="ember-text">No Permission Required.</span></div>
+        <div class="cta-sub">nopermissionpod.com</div>
+        <button class="cta-button">Subscribe Now →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 9 — SPONSORSHIP
+  ============================================================ -->
+  <section class="slide" id="slide-10">
+    <div class="bg-accent-corner"></div>
+    <div style="position:absolute;bottom:0;left:0;width:400px;height:300px;background:radial-gradient(ellipse at bottom left,rgba(201,75,12,0.1) 0%,transparent 65%);pointer-events:none;z-index:0;"></div>
+
+    <div class="sponsor-layout">
+      <div class="sponsor-left">
+        <div class="section-label">Partnerships</div>
+        <h2 class="display" style="font-size:clamp(44px,6vw,82px);">Partner<br><span class="ember-text">With Us</span></h2>
+        <div class="ember-line ember-line--left"></div>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;">
+          Our audience is made up of high-intent, high-agency professionals actively building businesses.
+          They don't just listen — they buy, invest, hire, and build with the brands they trust.
+        </p>
+
+        <div style="margin-top:4px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--ember-core);margin-bottom:14px;">Audience Demographics</div>
+          <div class="demo-grid">
+            <div class="demo-stat">
+              <div class="demo-value">78%</div>
+              <div class="demo-label">Decision Makers</div>
+            </div>
+            <div class="demo-stat">
+              <div class="demo-value">34</div>
+              <div class="demo-label">Avg. Listener Age</div>
+            </div>
+            <div class="demo-stat">
+              <div class="demo-value">$120K+</div>
+              <div class="demo-label">Avg. HHI</div>
+            </div>
+            <div class="demo-stat">
+              <div class="demo-value">65%</div>
+              <div class="demo-label">Own a Business</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sponsor-right">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--ember-core);">Sponsorship Tiers</div>
+
+        <div class="sponsor-options">
+          <div class="sponsor-tier">
+            <div class="tier-dot tier-dot--gold"></div>
+            <div class="tier-info">
+              <div class="tier-name">Presenting Sponsor</div>
+              <div class="tier-desc">Full episode ownership, 60-sec mid-roll + pre-roll, social amplification</div>
+            </div>
+            <div class="tier-cta">Inquire →</div>
+          </div>
+          <div class="sponsor-tier">
+            <div class="tier-dot tier-dot--silver"></div>
+            <div class="tier-info">
+              <div class="tier-name">Featured Partner</div>
+              <div class="tier-desc">30-sec mid-roll, newsletter mention, episode show notes link</div>
+            </div>
+            <div class="tier-cta">Inquire →</div>
+          </div>
+          <div class="sponsor-tier">
+            <div class="tier-dot tier-dot--bronze"></div>
+            <div class="tier-info">
+              <div class="tier-name">Brand Mention</div>
+              <div class="tier-desc">Host-read mention, show notes placement, social tag</div>
+            </div>
+            <div class="tier-cta">Inquire →</div>
+          </div>
+        </div>
+
+        <div class="contact-block">
+          <div class="contact-label">Get In Touch</div>
+          <div class="contact-email">partnerships@nopermissionpod.com</div>
+          <div class="contact-note">
+            We review all partnership inquiries within 48 hours. Please include your brand brief, target audience, and campaign goals for a faster response.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SLIDE 10 — CLOSING
+  ============================================================ -->
+  <section class="slide" id="slide-11">
+    <div class="closing-bg">
+      <div class="closing-glow-1"></div>
+      <div class="closing-glow-2"></div>
+      <div class="closing-lines"></div>
+
+      <!-- Animated ember sparks -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="15%" cy="70%" r="2" fill="#E85D04" opacity="0.5">
+          <animate attributeName="cy" values="70%;30%;70%" dur="7s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0;0.5" dur="7s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="25%" cy="80%" r="1.5" fill="#FF6B35" opacity="0.4">
+          <animate attributeName="cy" values="80%;20%;80%" dur="9s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.4;0;0.4" dur="9s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="75%" cy="75%" r="2" fill="#F48C06" opacity="0.5">
+          <animate attributeName="cy" values="75%;25%;75%" dur="6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0;0.5" dur="6s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="85%" cy="65%" r="1.5" fill="#C94B0C" opacity="0.6">
+          <animate attributeName="cy" values="65%;15%;65%" dur="8s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.6;0;0.6" dur="8s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="50%" cy="85%" r="2.5" fill="#E85D04" opacity="0.3">
+          <animate attributeName="cy" values="85%;35%;85%" dur="5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <div class="closing-content">
+      <div class="closing-pre">— The Business Podcast —</div>
+
+      <div class="closing-ember-bar"></div>
+
+      <div class="closing-title">NO<br>PERMISSION</div>
+
+      <div class="closing-ember-bar"></div>
+
+      <div class="closing-sub">New Episodes Every Week</div>
+
+      <div class="closing-site">nopermissionpod.com</div>
+
+      <div class="closing-socials">
+        <span class="closing-social-item">Spotify</span>
+        <span class="closing-social-sep">◆</span>
+        <span class="closing-social-item">Apple Podcasts</span>
+        <span class="closing-social-sep">◆</span>
+        <span class="closing-social-item">YouTube</span>
+        <span class="closing-social-sep">◆</span>
+        <span class="closing-social-item">@nopermissionpod</span>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /#deck -->
+
+<!-- Navigation Controls -->
+<button id="nav-prev" aria-label="Previous slide">&#8592;</button>
+<button id="nav-next" aria-label="Next slide">&#8594;</button>
+<div id="slide-counter"><span id="current-num">1</span> / <span id="total-num">11</span></div>
+<div id="progress-bar"></div>
+
+<script>
+  (function () {
+    const TOTAL = 11;
+    let current = 1;
+    let animating = false;
+
+    const progressBar = document.getElementById('progress-bar');
+    const currentNum  = document.getElementById('current-num');
+    const totalNum    = document.getElementById('total-num');
+
+    totalNum.textContent = TOTAL;
+
+    function getSlide(n) {
+      return document.getElementById('slide-' + n);
+    }
+
+    function updateProgress() {
+      const pct = (current / TOTAL) * 100;
+      progressBar.style.width = pct + '%';
+      currentNum.textContent  = current;
+    }
+
+    function goTo(next) {
+      if (animating || next === current || next < 1 || next > TOTAL) return;
+      animating = true;
+
+      const outSlide = getSlide(current);
+      const inSlide  = getSlide(next);
+
+      // Determine direction
+      const forward = next > current;
+
+      // Reset in-slide starting position
+      inSlide.style.transform = forward ? 'translateX(60px)' : 'translateX(-60px)';
+      inSlide.style.opacity = '0';
+      inSlide.style.transition = 'none';
+      inSlide.style.pointerEvents = 'none';
+
+      // Force reflow
+      inSlide.getBoundingClientRect();
+
+      // Remove active from current, add exit class
+      outSlide.classList.remove('active');
+      if (forward) {
+        outSlide.style.transform = 'translateX(-60px)';
+      } else {
+        outSlide.style.transform = 'translateX(60px)';
+      }
+      outSlide.style.opacity = '0';
+      outSlide.style.transition = 'opacity 700ms cubic-bezier(0.77,0,0.175,1), transform 700ms cubic-bezier(0.77,0,0.175,1)';
+      outSlide.style.pointerEvents = 'none';
+
+      // Animate in
+      requestAnimationFrame(function () {
+        inSlide.style.transition = 'opacity 700ms cubic-bezier(0.77,0,0.175,1), transform 700ms cubic-bezier(0.77,0,0.175,1)';
+        inSlide.style.transform  = 'translateX(0)';
+        inSlide.style.opacity    = '1';
+        inSlide.classList.add('active');
+        inSlide.style.pointerEvents = 'auto';
+      });
+
+      current = next;
+      updateProgress();
+
+      setTimeout(function () {
+        animating = false;
+        // Clean up out slide transform so CSS class handles it next time
+        outSlide.style.transition = '';
+        outSlide.style.transform  = '';
+        outSlide.style.opacity    = '';
+      }, 750);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   goTo(current - 1);
+    });
+
+    // Button navigation
+    document.getElementById('nav-next').addEventListener('click', function () { goTo(current + 1); });
+    document.getElementById('nav-prev').addEventListener('click', function () { goTo(current - 1); });
+
+    // Touch swipe support
+    var touchStartX = 0;
+    var touchStartY = 0;
+    document.addEventListener('touchstart', function (e) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', function (e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        if (dx < 0) goTo(current + 1);
+        else        goTo(current - 1);
+      }
+    }, { passive: true });
+
+    // Init
+    updateProgress();
+  })();
+</script>
+</body>
+</html>
