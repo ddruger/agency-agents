@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>No Permission — No permission. Just proof.</title>
-  <meta name="description" content="A podcast about founders who built real companies before the world decided they were allowed to. The stories are unfinished, the traction is real, and nobody's heard of them yet." />
+  <meta name="description" content="Intimate video interviews with the next generation of builders. USC founders who didn't ask permission — and built anyway." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -36,16 +36,14 @@
       --body:         'Inter', sans-serif;
 
       --max-w:        1120px;
-      --section-pad:  clamp(80px, 10vw, 140px);
+      --section-pad:  clamp(100px, 12vw, 160px);
     }
 
     /* ============================================================
        RESET & BASE
     ============================================================ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--bg);
       color: var(--text);
@@ -54,13 +52,11 @@
       line-height: 1.6;
       overflow-x: hidden;
     }
-
     a { color: inherit; text-decoration: none; }
-
     img { display: block; max-width: 100%; }
 
     /* ============================================================
-       LAYOUT UTILITIES
+       LAYOUT
     ============================================================ */
     .container {
       width: 100%;
@@ -92,66 +88,12 @@
       height: 2px;
       background: linear-gradient(90deg, var(--rust), var(--gold));
       border-radius: 2px;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
       box-shadow: 0 0 12px rgba(200,130,10,0.5);
     }
 
-    .rule--center { margin-left: auto; margin-right: auto; }
-
-    .display-xl {
-      font-family: var(--display);
-      font-size: clamp(72px, 12vw, 180px);
-      line-height: 0.87;
-      letter-spacing: 0.04em;
-      color: var(--text);
-    }
-
-    .display-lg {
-      font-family: var(--display);
-      font-size: clamp(48px, 7vw, 100px);
-      line-height: 0.9;
-      letter-spacing: 0.03em;
-      color: var(--text);
-    }
-
-    .display-md {
-      font-family: var(--display);
-      font-size: clamp(36px, 5vw, 64px);
-      line-height: 0.95;
-      letter-spacing: 0.03em;
-      color: var(--text);
-    }
-
-    .body-lg {
-      font-size: clamp(17px, 2vw, 20px);
-      line-height: 1.7;
-      color: var(--text);
-      font-weight: 400;
-    }
-
-    .body-md {
-      font-size: clamp(15px, 1.6vw, 17px);
-      line-height: 1.75;
-      color: var(--text);
-      font-weight: 400;
-    }
-
     .gold { color: var(--gold); }
-    .rust { color: var(--rust); }
     .pale { color: var(--pale-gold); }
-    .muted { color: var(--text-mid); }
-
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 32px 28px;
-      transition: border-color 200ms ease, box-shadow 200ms ease;
-    }
-    .card:hover {
-      border-color: var(--border-gold);
-      box-shadow: 0 0 28px var(--gold-glow);
-    }
 
     /* ============================================================
        NAV
@@ -210,7 +152,7 @@
     }
 
     /* ============================================================
-       HERO
+       SECTION 1 — HERO
     ============================================================ */
     #hero {
       min-height: 100svh;
@@ -222,6 +164,79 @@
       overflow: hidden;
     }
 
+    /* ── Animated background particles ── */
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-particles span {
+      position: absolute;
+      display: block;
+      border-radius: 50%;
+      opacity: 0;
+      animation: particle-drift linear infinite;
+    }
+
+    /* Individual particle positions/sizes/timings */
+    .hero-particles span:nth-child(1)  { width:2px;  height:2px;  background:var(--gold);    left:12%;  top:20%; animation-duration:18s; animation-delay:0s;    opacity-range: 0 0.4; }
+    .hero-particles span:nth-child(2)  { width:1px;  height:1px;  background:var(--rust);    left:28%;  top:55%; animation-duration:24s; animation-delay:-5s;   }
+    .hero-particles span:nth-child(3)  { width:3px;  height:3px;  background:var(--gold);    left:72%;  top:30%; animation-duration:20s; animation-delay:-3s;   }
+    .hero-particles span:nth-child(4)  { width:1px;  height:1px;  background:var(--pale-gold);left:85%; top:70%; animation-duration:16s; animation-delay:-8s;   }
+    .hero-particles span:nth-child(5)  { width:2px;  height:2px;  background:var(--rust);    left:55%;  top:15%; animation-duration:22s; animation-delay:-2s;   }
+    .hero-particles span:nth-child(6)  { width:1px;  height:1px;  background:var(--gold);    left:40%;  top:80%; animation-duration:28s; animation-delay:-10s;  }
+    .hero-particles span:nth-child(7)  { width:2px;  height:2px;  background:var(--pale-gold);left:6%;  top:60%; animation-duration:19s; animation-delay:-6s;   }
+    .hero-particles span:nth-child(8)  { width:1px;  height:1px;  background:var(--gold);    left:93%;  top:45%; animation-duration:25s; animation-delay:-14s;  }
+    .hero-particles span:nth-child(9)  { width:3px;  height:3px;  background:var(--rust);    left:60%;  top:88%; animation-duration:21s; animation-delay:-7s;   }
+    .hero-particles span:nth-child(10) { width:1px;  height:1px;  background:var(--gold);    left:20%;  top:40%; animation-duration:30s; animation-delay:-12s;  }
+    .hero-particles span:nth-child(11) { width:2px;  height:2px;  background:var(--pale-gold);left:48%; top:62%; animation-duration:17s; animation-delay:-4s;   }
+    .hero-particles span:nth-child(12) { width:1px;  height:1px;  background:var(--rust);    left:78%;  top:10%; animation-duration:23s; animation-delay:-9s;   }
+
+    @keyframes particle-drift {
+      0%   { transform: translateY(0px) translateX(0px); opacity: 0; }
+      10%  { opacity: 0.35; }
+      45%  { opacity: 0.2; }
+      80%  { opacity: 0.35; }
+      90%  { opacity: 0; }
+      100% { transform: translateY(-60px) translateX(20px); opacity: 0; }
+    }
+
+    /* Slow-pulse glow rings in the background */
+    .hero-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(200, 130, 10, 0.06);
+      pointer-events: none;
+      z-index: 0;
+      animation: ring-pulse ease-in-out infinite;
+    }
+    .hero-ring:nth-child(1) {
+      width: 600px; height: 600px;
+      bottom: -300px; left: -200px;
+      animation-duration: 12s; animation-delay: 0s;
+    }
+    .hero-ring:nth-child(2) {
+      width: 400px; height: 400px;
+      bottom: -200px; left: -100px;
+      border-color: rgba(200, 74, 10, 0.08);
+      animation-duration: 9s; animation-delay: -3s;
+    }
+    .hero-ring:nth-child(3) {
+      width: 280px; height: 280px;
+      top: 15%; right: 8%;
+      border-color: rgba(200, 130, 10, 0.05);
+      animation-duration: 15s; animation-delay: -6s;
+    }
+
+    @keyframes ring-pulse {
+      0%, 100% { transform: scale(1);    opacity: 1; }
+      50%       { transform: scale(1.06); opacity: 0.4; }
+    }
+
+    /* Base glows */
     .hero-glow {
       position: absolute;
       bottom: -200px;
@@ -233,7 +248,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
     .hero-glow-top {
       position: absolute;
       top: -100px;
@@ -281,7 +295,7 @@
     }
 
     .hero-sub {
-      max-width: 580px;
+      max-width: 560px;
       font-size: clamp(16px, 1.8vw, 19px);
       line-height: 1.7;
       color: var(--text);
@@ -340,461 +354,279 @@
     }
 
     /* ============================================================
-       ANCHOR STATEMENT
+       SECTION 2 — OVERVIEW
     ============================================================ */
-    #anchor {
+    #overview {
       background: var(--bg-raised);
-      padding: clamp(60px, 8vw, 100px) 0;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
+      padding: var(--section-pad) 0;
     }
 
-    .anchor-quote {
-      font-family: var(--display);
-      font-size: clamp(40px, 6vw, 86px);
-      line-height: 1.0;
-      letter-spacing: 0.03em;
-      color: var(--text);
-      max-width: 960px;
-    }
-
-    .anchor-quote em {
-      font-style: normal;
-      color: var(--pale-gold);
-    }
-
-    /* ============================================================
-       ABOUT
-    ============================================================ */
-    #about {
-      background: var(--bg);
-    }
-
-    .about-grid {
+    .overview-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: clamp(48px, 6vw, 100px);
+      gap: clamp(60px, 8vw, 120px);
       align-items: start;
     }
 
-    .about-left h2 {
+    .overview-left h2 {
       font-family: var(--display);
-      font-size: clamp(44px, 6vw, 80px);
-      line-height: 0.95;
+      font-size: clamp(52px, 7vw, 96px);
+      line-height: 0.9;
       letter-spacing: 0.03em;
       color: var(--text);
-      margin-bottom: 32px;
+      margin-bottom: 36px;
     }
 
-    .about-right {
-      padding-top: 12px;
+    .overview-pull {
+      font-family: var(--display);
+      font-size: clamp(20px, 2.5vw, 32px);
+      letter-spacing: 0.06em;
+      color: var(--pale-gold);
+      display: block;
+      margin-top: 36px;
+      padding-left: 20px;
+      border-left: 3px solid var(--rust);
+      line-height: 1.3;
     }
 
-    .about-right p {
+    .overview-right {
+      padding-top: 8px;
+    }
+
+    .overview-right p {
       font-size: clamp(15px, 1.6vw, 18px);
-      line-height: 1.8;
+      line-height: 1.85;
       color: var(--text);
     }
+    .overview-right p + p { margin-top: 22px; }
 
-    .about-right p + p {
-      margin-top: 20px;
-    }
-
-    .about-right p.sub {
+    .overview-right p.muted {
       color: var(--text-mid);
       font-size: clamp(14px, 1.4vw, 16px);
     }
 
+    .differentiators {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      margin-top: 44px;
+    }
+
+    .diff-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .diff-row:first-child { border-top: 1px solid var(--border); }
+
+    .diff-num {
+      font-family: var(--display);
+      font-size: 36px;
+      letter-spacing: 0.04em;
+      color: var(--rust);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 44px;
+    }
+
+    .diff-text {
+      padding-top: 4px;
+    }
+
+    .diff-heading {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .diff-body {
+      font-size: 14px;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+
     @media (max-width: 768px) {
-      .about-grid { grid-template-columns: 1fr; }
+      .overview-grid { grid-template-columns: 1fr; }
     }
 
     /* ============================================================
-       WHY LISTEN
+       SECTION 3 — WHAT TO EXPECT
     ============================================================ */
-    #why {
-      background: var(--bg-raised);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
+    #expect {
+      background: var(--bg);
+      padding: var(--section-pad) 0;
     }
 
-    .why-header {
-      max-width: 800px;
-      margin-bottom: clamp(48px, 6vw, 80px);
+    .expect-header {
+      text-align: center;
+      margin-bottom: clamp(60px, 8vw, 100px);
     }
 
-    .why-header h2 {
+    .expect-header h2 {
       font-family: var(--display);
-      font-size: clamp(42px, 5.5vw, 76px);
-      line-height: 0.95;
+      font-size: clamp(52px, 8vw, 110px);
+      line-height: 0.9;
       letter-spacing: 0.03em;
       color: var(--text);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
-    .why-pull {
-      font-family: var(--display);
-      font-size: clamp(22px, 3vw, 36px);
-      letter-spacing: 0.06em;
-      color: var(--pale-gold);
-      display: block;
-      margin-top: 40px;
-      padding-left: 20px;
-      border-left: 3px solid var(--rust);
+    .expect-header p {
+      font-size: clamp(16px, 1.8vw, 19px);
+      color: var(--text-mid);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
     }
 
-    .why-body {
-      font-size: clamp(15px, 1.6vw, 18px);
-      line-height: 1.8;
-      color: var(--text);
-      max-width: 640px;
-    }
-
-    .why-stats {
+    .expect-facts {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 2px;
-      margin-top: clamp(48px, 6vw, 80px);
+      margin-bottom: 2px;
     }
 
-    .stat-box {
+    .fact-card {
       background: var(--bg-card);
-      padding: 40px 32px;
       border: 1px solid var(--border);
+      padding: 40px 32px;
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
+    .fact-card:hover {
+      border-color: var(--border-gold);
+      box-shadow: 0 0 28px var(--gold-glow);
     }
 
-    .stat-number {
+    .fact-number {
       font-family: var(--display);
-      font-size: clamp(52px, 7vw, 88px);
+      font-size: clamp(56px, 8vw, 96px);
       line-height: 1;
       letter-spacing: 0.02em;
       color: var(--gold);
     }
 
-    .stat-label {
+    .fact-label {
       font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.2em;
+      font-weight: 700;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--text-mid);
       margin-top: 10px;
     }
 
-    .stat-sub {
+    .fact-sub {
       font-size: 14px;
       color: var(--text-mid);
-      margin-top: 6px;
-      line-height: 1.5;
-    }
-
-    /* ============================================================
-       SEASON 1
-    ============================================================ */
-    #season {
-      background: var(--bg);
-    }
-
-    .season-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 24px;
-      margin-bottom: clamp(40px, 5vw, 64px);
-      flex-wrap: wrap;
-    }
-
-    .season-header h2 {
-      font-family: var(--display);
-      font-size: clamp(44px, 6vw, 84px);
-      line-height: 0.9;
-      letter-spacing: 0.03em;
-      color: var(--text);
-    }
-
-    .season-desc {
-      font-size: clamp(15px, 1.6vw, 17px);
-      line-height: 1.75;
-      color: var(--text-mid);
-      max-width: 420px;
-    }
-
-    .episode-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 2px;
-    }
-
-    .episode-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 32px 28px;
-      transition: border-color 200ms ease, background 200ms ease;
-      cursor: default;
-    }
-
-    .episode-card:hover {
-      border-color: var(--border-gold);
-      background: var(--bg-raised);
-    }
-
-    .ep-number {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--rust);
-      margin-bottom: 16px;
-    }
-
-    .ep-name {
-      font-family: var(--display);
-      font-size: 28px;
-      letter-spacing: 0.04em;
-      color: var(--text);
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-
-    .ep-desc {
-      font-size: 13px;
-      color: var(--text-mid);
+      margin-top: 8px;
       line-height: 1.6;
-      margin-top: 12px;
     }
 
-    .ep-tag {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      border: 1px solid var(--border-gold);
-      padding: 3px 10px;
-      border-radius: 2px;
-      margin-top: 16px;
-      background: rgba(200,130,10,0.06);
-    }
-
-    .season-note {
-      margin-top: 40px;
-      font-size: 14px;
-      color: var(--text-mid);
-      letter-spacing: 0.05em;
-      padding-top: 28px;
-      border-top: 1px solid var(--border);
-    }
-
-    /* ============================================================
-       HOST
-    ============================================================ */
-    #host {
-      background: var(--bg-raised);
-      border-top: 1px solid var(--border);
-    }
-
-    .host-grid {
+    .expect-details {
       display: grid;
-      grid-template-columns: auto 1fr;
-      gap: clamp(40px, 6vw, 80px);
-      align-items: start;
-    }
-
-    .host-avatar {
-      width: clamp(100px, 12vw, 160px);
-      height: clamp(100px, 12vw, 160px);
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--rust), var(--gold));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--display);
-      font-size: clamp(36px, 5vw, 64px);
-      letter-spacing: 0.06em;
-      color: var(--text);
-      flex-shrink: 0;
-      box-shadow: 0 0 48px rgba(200,74,10,0.25);
-    }
-
-    .host-name {
-      font-family: var(--display);
-      font-size: clamp(44px, 6vw, 80px);
-      line-height: 0.9;
-      letter-spacing: 0.04em;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-
-    .host-title {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 28px;
-    }
-
-    .host-bio {
-      font-size: clamp(15px, 1.6vw, 17px);
-      line-height: 1.8;
-      color: var(--text);
-    }
-
-    .host-bio + .host-bio {
-      margin-top: 16px;
-    }
-
-    .host-bio.italic {
-      font-style: italic;
-      color: var(--text-mid);
-      border-left: 2px solid var(--border-gold);
-      padding-left: 20px;
-      margin-top: 28px;
-    }
-
-    .host-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 28px;
-    }
-
-    .host-tag {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--text-mid);
-      border: 1px solid var(--border);
-      padding: 5px 12px;
-      border-radius: 2px;
-    }
-
-    @media (max-width: 640px) {
-      .host-grid { grid-template-columns: 1fr; }
-    }
-
-    /* ============================================================
-       LISTEN / PLATFORMS
-    ============================================================ */
-    #listen {
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-    }
-
-    .listen-header {
-      text-align: center;
-      margin-bottom: clamp(48px, 6vw, 80px);
-    }
-
-    .listen-header h2 {
-      font-family: var(--display);
-      font-size: clamp(48px, 7vw, 100px);
-      line-height: 0.9;
-      letter-spacing: 0.03em;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-
-    .listen-sub {
-      font-size: clamp(15px, 1.6vw, 17px);
-      color: var(--text-mid);
-      max-width: 440px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    .platform-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-    }
-
-    .platform-btn {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 20px 24px;
-      border-radius: 5px;
-      transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
-      cursor: pointer;
-    }
-
-    .platform-btn:hover {
-      border-color: var(--border-gold);
-      box-shadow: 0 0 24px var(--gold-glow);
-      background: var(--bg-raised);
-    }
-
-    .platform-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .platform-name {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      color: var(--text);
-    }
-
-    .platform-action {
-      font-size: 11px;
-      color: var(--text-mid);
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
       margin-top: 2px;
     }
 
-    /* ============================================================
-       CLOSING CTA
-    ============================================================ */
-    #cta {
+    .detail-block {
       background: var(--bg-raised);
-      border-top: 1px solid var(--border);
-      text-align: center;
-      padding: clamp(80px, 12vw, 160px) 0;
-      position: relative;
-      overflow: hidden;
+      border: 1px solid var(--border);
+      padding: 40px 36px;
     }
 
-    .cta-glow {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 800px;
-      height: 500px;
-      background: radial-gradient(ellipse, rgba(200,74,10,0.12) 0%, transparent 65%);
-      pointer-events: none;
-    }
-
-    .cta-inner {
-      position: relative;
-      z-index: 2;
-    }
-
-    .cta-title {
+    .detail-block h3 {
       font-family: var(--display);
-      font-size: clamp(60px, 10vw, 140px);
-      line-height: 0.9;
+      font-size: clamp(28px, 3vw, 40px);
       letter-spacing: 0.04em;
       color: var(--text);
-      margin-bottom: 24px;
+      margin-bottom: 16px;
+      line-height: 1;
     }
 
-    .cta-sub {
-      font-size: clamp(16px, 1.8vw, 20px);
+    .detail-block ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .detail-block ul li {
+      font-size: clamp(14px, 1.5vw, 16px);
       color: var(--text-mid);
-      max-width: 480px;
-      margin: 0 auto 44px;
-      line-height: 1.7;
+      line-height: 1.6;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .detail-block ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 5px;
+      height: 1px;
+      background: var(--rust);
+    }
+
+    .detail-block ul li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .contact-block {
+      margin-top: 2px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      padding: 48px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .contact-left h3 {
+      font-family: var(--display);
+      font-size: clamp(32px, 4vw, 52px);
+      letter-spacing: 0.04em;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .contact-left p {
+      font-size: clamp(14px, 1.5vw, 16px);
+      color: var(--text-mid);
+      line-height: 1.65;
+      max-width: 420px;
+    }
+
+    .contact-email {
+      font-family: var(--display);
+      font-size: clamp(20px, 2.5vw, 32px);
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      border-bottom: 1px solid var(--border-gold);
+      padding-bottom: 4px;
+      transition: color 200ms ease;
+      flex-shrink: 0;
+    }
+    .contact-email:hover { color: var(--pale-gold); }
+
+    @media (max-width: 768px) {
+      .expect-details { grid-template-columns: 1fr; }
+      .contact-block { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 640px) {
+      .expect-facts { grid-template-columns: 1fr 1fr; }
     }
 
     /* ============================================================
@@ -833,7 +665,6 @@
       gap: 28px;
       list-style: none;
     }
-
     .footer-links a {
       font-size: 11px;
       font-weight: 600;
@@ -843,6 +674,10 @@
       transition: color 200ms ease;
     }
     .footer-links a:hover { color: var(--gold); }
+
+    @media (max-width: 640px) {
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
 
     /* ============================================================
        SCROLL REVEAL
@@ -857,28 +692,11 @@
       transform: translateY(0);
     }
 
-    /* Stagger children */
     .stagger > * { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .stagger.visible > *:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0ms; }
     .stagger.visible > *:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 80ms; }
     .stagger.visible > *:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 160ms; }
     .stagger.visible > *:nth-child(4) { opacity: 1; transform: translateY(0); transition-delay: 240ms; }
-    .stagger.visible > *:nth-child(5) { opacity: 1; transform: translateY(0); transition-delay: 320ms; }
-    .stagger.visible > *:nth-child(6) { opacity: 1; transform: translateY(0); transition-delay: 400ms; }
-    .stagger.visible > *:nth-child(7) { opacity: 1; transform: translateY(0); transition-delay: 480ms; }
-    .stagger.visible > *:nth-child(8) { opacity: 1; transform: translateY(0); transition-delay: 560ms; }
-    .stagger.visible > *:nth-child(9) { opacity: 1; transform: translateY(0); transition-delay: 640ms; }
-    .stagger.visible > *:nth-child(10) { opacity: 1; transform: translateY(0); transition-delay: 720ms; }
-
-    /* ============================================================
-       MOBILE OVERRIDES
-    ============================================================ */
-    @media (max-width: 640px) {
-      .season-header { flex-direction: column; align-items: flex-start; }
-      .season-desc { max-width: 100%; }
-      .why-stats { grid-template-columns: 1fr 1fr; }
-      .footer-inner { flex-direction: column; align-items: flex-start; }
-    }
   </style>
 </head>
 <body>
@@ -887,31 +705,42 @@
   <nav>
     <div class="nav-logo">NO<span>.</span>PERMISSION</div>
     <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#season">Season 1</a></li>
-      <li><a href="#host">Host</a></li>
-      <li><a href="#listen">Listen</a></li>
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#overview">About</a></li>
+      <li><a href="#expect">Season 1</a></li>
     </ul>
-    <a href="#listen" class="nav-cta">Listen Now</a>
+    <a href="mailto:daniel@nopermissionpodcast.com" class="nav-cta">Get in Touch</a>
   </nav>
 
   <!-- ===================================================
-       HERO
+       SECTION 1 — TITLE / HERO
   =================================================== -->
   <section id="hero">
+
+    <!-- Animated background layers -->
+    <div class="hero-particles">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+    <div class="hero-ring"></div>
+    <div class="hero-ring"></div>
+    <div class="hero-ring"></div>
     <div class="hero-glow"></div>
     <div class="hero-glow-top"></div>
 
     <div class="container hero-inner">
-      <div class="hero-label">A Podcast</div>
+      <div class="hero-label">A Podcast · Season 1 Now Live</div>
       <h1 class="hero-title">NO<br>PERMISSION</h1>
       <p class="hero-tagline">No permission. Just proof.</p>
       <p class="hero-sub">
-        A podcast about founders who built real companies before the world decided they were allowed to.
+        Intimate video interviews with the next generation of builders —
+        the ones who didn't ask the world if they were allowed.
       </p>
       <div class="hero-actions">
-        <a href="#listen" class="btn-primary">Start with Episode 1</a>
-        <a href="#about" class="btn-ghost">About the Show</a>
+        <a href="#expect" class="btn-primary">Explore Season 1</a>
+        <a href="#overview" class="btn-ghost">About the Show</a>
       </div>
     </div>
 
@@ -919,249 +748,160 @@
   </section>
 
   <!-- ===================================================
-       NARRATIVE ANCHOR
+       SECTION 2 — OVERVIEW
   =================================================== -->
-  <section id="anchor">
+  <section id="overview">
     <div class="container">
-      <div class="reveal">
-        <p class="anchor-quote">
-          "The stories are unfinished,<br>
-          the traction is real,<br>
-          and <em>nobody's heard of them yet.</em>"
-        </p>
-      </div>
-    </div>
-  </section>
 
-  <!-- ===================================================
-       ABOUT
-  =================================================== -->
-  <section id="about" class="section">
-    <div class="container">
-      <div class="about-grid">
-        <div class="about-left reveal">
+      <div class="overview-grid">
+
+        <div class="overview-left reveal">
           <span class="eyebrow">About the Show</span>
           <span class="rule"></span>
-          <h2 class="display-lg">Built Different.<br>Built Bold.</h2>
+          <h2>Intimate.<br>Unfiltered.<br>Too Early<br>to Know.</h2>
+          <span class="overview-pull">
+            The founders nobody saw coming —<br>
+            before anyone knew it.
+          </span>
         </div>
-        <div class="about-right reveal">
-          <p class="body-md">
-            No Permission captures founders at a specific, fleeting moment: after the proof exists, before the world has caught up. Every guest on this show was too young to have a track record and too unproven to have credibility — and they built anyway.
+
+        <div class="overview-right reveal">
+          <p>
+            No Permission is not a success story retrospective. It's not a
+            highlight reel of hustle culture clichés. And it's not another
+            founder sitting across from you telling you <em>how they built it</em>
+            with a nine-figure exit already banked.
           </p>
-          <p class="body-md" style="margin-top:20px;">
-            These are not the famous ones. No track record. No credentials. No one handing them a seat at the table. The world hadn't decided they were allowed yet — and by any conventional measure, it wouldn't have. They didn't ask. They built.
+          <p>
+            This is something different: intimate, long-form video conversations
+            with the next generation of builders — caught at a specific, fleeting
+            moment. After the proof exists. Before the world has caught up.
           </p>
-          <p class="body-md" style="margin-top:20px;">
-            Real revenue. Real users. Real proof. The stories are unfinished — and that's exactly what makes them worth hearing now.
+          <p>
+            Every guest on this show was too young to have a track record and too
+            unproven to have credibility. No one handed them a seat at the table.
+            By any conventional measure, they weren't allowed to build what they
+            built. They didn't ask. They built anyway. The company is real. The
+            traction is there. And the story isn't finished yet.
           </p>
-          <p class="body-md sub" style="margin-top:24px; color: var(--text-mid);">
-            Season 1 is ten USC founders, all dropping at once.
+          <p class="muted" style="margin-top:28px; border-left: 2px solid var(--border-gold); padding-left: 20px; font-style: italic;">
+            "I've invested in founders like this. I've watched them get dismissed,
+            ignored, and underestimated — and then be right anyway. No Permission
+            exists to document that moment before the world catches up."
+            <br><br>
+            <strong style="color: var(--text-warm); font-style: normal; letter-spacing: 0.06em;">— Daniel Druger, Host</strong>
           </p>
+        </div>
+
+      </div>
+
+      <div class="differentiators stagger" style="margin-top: clamp(60px, 8vw, 100px);">
+        <div class="diff-row">
+          <div class="diff-num">01</div>
+          <div class="diff-text">
+            <div class="diff-heading">Not "How I Built This"</div>
+            <div class="diff-body">No polished retrospectives. These guests are still in the middle of it — the wins are real, the stakes are live, and nobody's edited out the hard parts yet.</div>
+          </div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-num">02</div>
+          <div class="diff-text">
+            <div class="diff-heading">Not a Hustler Show</div>
+            <div class="diff-body">This isn't about grinding harder or waking up at 5am. It's about something rarer: genuine agency. Founders who looked at a closed door and built a different building.</div>
+          </div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-num">03</div>
+          <div class="diff-text">
+            <div class="diff-heading">Before the Outcome Is Written</div>
+            <div class="diff-body">Most founder media tells the story backwards. We capture it in real time — the traction is real, the future is open, and you're hearing it before the rest of the world decides they were right.</div>
+          </div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-num">04</div>
+          <div class="diff-text">
+            <div class="diff-heading">The Next Big Thing — Before It's Big</div>
+            <div class="diff-body">These aren't famous founders. They're the ones building the next big thing while the world is still figuring out if they're allowed to. You're early. That's exactly the point.</div>
+          </div>
         </div>
       </div>
+
     </div>
   </section>
 
   <!-- ===================================================
-       WHY LISTEN
+       SECTION 3 — WHAT TO EXPECT
   =================================================== -->
-  <section id="why" class="section">
+  <section id="expect">
     <div class="container">
-      <div class="why-header reveal">
-        <span class="eyebrow">Why Listen</span>
-        <span class="rule"></span>
-        <h2 class="display-lg">Not the famous ones.<br>The ones who were right<br>before anyone knew it.</h2>
-        <p class="why-body" style="margin-top:28px;">
-          Most founder podcasts tell the story backwards — success first, the hard parts edited out in hindsight. No Permission is different. These guests are still in the middle of it. The company is real, the traction is there, and the story isn't finished yet. That's what makes it worth listening to now.
-        </p>
-        <span class="why-pull">The founders nobody saw coming.</span>
+
+      <div class="expect-header reveal">
+        <span class="eyebrow">Season 1</span>
+        <span class="rule" style="margin: 0 auto 28px;"></span>
+        <h2>What to<br>Expect</h2>
+        <p>Ten episodes. Ten USC founders. All available now — no waiting for next week.</p>
       </div>
 
-      <div class="why-stats stagger">
-        <div class="stat-box">
-          <div class="stat-number">0</div>
-          <div class="stat-label">Hindsight edits</div>
-          <div class="stat-sub">Captured before the outcome is written</div>
+      <div class="expect-facts stagger">
+        <div class="fact-card">
+          <div class="fact-number">10</div>
+          <div class="fact-label">Episodes · Season 1</div>
+          <div class="fact-sub">Full season, all at once. Start from Episode 1 or find the story that pulls you in.</div>
         </div>
-        <div class="stat-box">
-          <div class="stat-number gold">10</div>
-          <div class="stat-label">Founders · Season 1</div>
-          <div class="stat-sub">All episodes available now</div>
+        <div class="fact-card">
+          <div class="fact-number" style="color: var(--rust);">Video</div>
+          <div class="fact-label">Format</div>
+          <div class="fact-sub">Full video interviews — not a talking-head clip show. Long-form, real conversation.</div>
         </div>
-        <div class="stat-box">
-          <div class="stat-number">45<span style="font-size:0.5em; color:var(--text-mid)">–60</span></div>
-          <div class="stat-label">Minutes per episode</div>
-          <div class="stat-sub">No padding, no filler</div>
+        <div class="fact-card">
+          <div class="fact-number">USC</div>
+          <div class="fact-label">Season 1 Founders</div>
+          <div class="fact-sub">Current students and recent alumni. Built while everyone else was choosing a major.</div>
         </div>
-        <div class="stat-box">
-          <div class="stat-number gold">USC</div>
-          <div class="stat-label">Season 1 · All from USC</div>
-          <div class="stat-sub">Built while everyone else was choosing a major</div>
+        <div class="fact-card">
+          <div class="fact-number" style="font-size: clamp(36px, 5vw, 60px);">45–60</div>
+          <div class="fact-label">Minutes per episode</div>
+          <div class="fact-sub">No padding. No filler. The full conversation — because the full story takes time.</div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ===================================================
-       SEASON 1
-  =================================================== -->
-  <section id="season" class="section">
-    <div class="container">
-      <div class="season-header reveal">
-        <div>
-          <span class="eyebrow">Now Available</span>
-          <span class="rule"></span>
-          <h2 class="display-lg">Season 1<br><span class="pale">USC Founders</span></h2>
+      <div class="expect-details reveal">
+        <div class="detail-block">
+          <h3>Who You'll<br>Meet</h3>
+          <ul>
+            <li><strong>USC students</strong> building companies while in class</li>
+            <li><strong>Recent alumni</strong> who didn't wait for a title or permission</li>
+            <li>Founders with <strong>real revenue and real users</strong> — not just a pitch deck</li>
+            <li>People whose stories <strong>aren't finished yet</strong> — and that's why they matter now</li>
+            <li>The ones the conventional system said no to — and who built around it anyway</li>
+          </ul>
         </div>
-        <p class="season-desc">
-          Ten founders from USC. Ten episodes. All dropping at once. No waiting for next week — the whole season is here. Each one built something real while everyone around them was still figuring out what to major in.
-        </p>
+        <div class="detail-block">
+          <h3>What We<br>Talk About</h3>
+          <ul>
+            <li>The <strong>exact moment</strong> they decided to build without asking</li>
+            <li>What they've <strong>actually proven</strong> — revenue, users, traction</li>
+            <li>What the <strong>hardest part really was</strong> — not the sanitized version</li>
+            <li>Where the company <strong>is right now</strong>, not where it ended up</li>
+            <li>The <strong>internal logic</strong> of a builder who doesn't wait for permission</li>
+          </ul>
+        </div>
       </div>
 
-    </div>
-  </section>
-
-  <!-- ===================================================
-       HOST
-  =================================================== -->
-  <section id="host" class="section">
-    <div class="container">
-      <div class="host-grid">
-        <div class="reveal">
-          <div class="host-avatar">DD</div>
-        </div>
-        <div class="reveal">
-          <span class="eyebrow">Your Host</span>
-          <span class="rule"></span>
-          <h2 class="host-name">Daniel<br>Druger</h2>
-          <p class="host-title">Founder · Investor · Operator</p>
-          <p class="host-bio">
-            Daniel Druger has spent 15+ years at the intersection of technology, media, and startups — as a founder, an early leader at companies that exited, and an active investor in the next generation of builders.
+      <div class="contact-block reveal">
+        <div class="contact-left">
+          <h3>Get in Touch</h3>
+          <p>
+            Know a founder who built something real without asking permission?
+            Want to be a guest on Season 2, partner with the show, or just reach out?
+            We want to hear from you.
           </p>
-          <p class="host-bio italic">
-            "These stories needed to be told. I've invested in founders like this. I've watched them get dismissed, ignored, and underestimated — and then be right anyway. No Permission exists to document that moment before the world catches up."
-          </p>
-          <div class="host-tags">
-            <span class="host-tag">Investor</span>
-            <span class="host-tag">Advisor</span>
-            <span class="host-tag">Operator</span>
-            <span class="host-tag">Co-Host · ADSN</span>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================================================
-       LISTEN
-  =================================================== -->
-  <section id="listen" class="section">
-    <div class="container">
-      <div class="listen-header reveal">
-        <span class="eyebrow">Start Listening</span>
-        <span class="rule rule--center"></span>
-        <h2>You're early.<br>Find them now.</h2>
-        <p class="listen-sub">
-          All ten episodes of Season 1 are live. No waiting. Pick your platform and start from Episode 1.
-        </p>
+        <a href="mailto:daniel@nopermissionpodcast.com" class="contact-email">
+          daniel@nopermissionpodcast.com
+        </a>
       </div>
 
-      <div class="platform-grid stagger">
-
-        <a href="#" class="platform-btn">
-          <div class="platform-icon" style="background:#9333ea22;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" stroke="#9333ea" stroke-width="1.5"/>
-              <circle cx="12" cy="12" r="4" fill="#9333ea"/>
-              <path d="M8 12h-4M20 12h-4M12 8V4M12 20v-4" stroke="#9333ea" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div>
-            <div class="platform-name">Apple Podcasts</div>
-            <div class="platform-action">Subscribe &rarr;</div>
-          </div>
-        </a>
-
-        <a href="#" class="platform-btn">
-          <div class="platform-icon" style="background:#1db95422;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="10" fill="#1db954" opacity="0.15"/>
-              <path d="M7 14.5c2.5-1 5.5-1 8 .5M6 11c3-1.5 7-1.5 10 .5M8 17.5c2-0.7 4-0.7 6 0" stroke="#1db954" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div>
-            <div class="platform-name">Spotify</div>
-            <div class="platform-action">Follow &rarr;</div>
-          </div>
-        </a>
-
-        <a href="#" class="platform-btn">
-          <div class="platform-icon" style="background:#ff000022;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="5" width="18" height="14" rx="3" fill="#ff0000" opacity="0.2"/>
-              <path d="M10 9l6 3-6 3V9z" fill="#ff0000"/>
-            </svg>
-          </div>
-          <div>
-            <div class="platform-name">YouTube</div>
-            <div class="platform-action">Watch &rarr;</div>
-          </div>
-        </a>
-
-        <a href="#" class="platform-btn">
-          <div class="platform-icon" style="background:#00a2ed22;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="4" width="18" height="16" rx="3" fill="none" stroke="#00a2ed" stroke-width="1.5"/>
-              <path d="M8 8h8M8 12h8M8 16h5" stroke="#00a2ed" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div>
-            <div class="platform-name">Amazon Music</div>
-            <div class="platform-action">Listen &rarr;</div>
-          </div>
-        </a>
-
-        <a href="#" class="platform-btn">
-          <div class="platform-icon" style="background:#f4821f22;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="9" stroke="#f4821f" stroke-width="1.5"/>
-              <path d="M9 8l6 4-6 4V8z" fill="#f4821f"/>
-            </svg>
-          </div>
-          <div>
-            <div class="platform-name">Overcast</div>
-            <div class="platform-action">Open &rarr;</div>
-          </div>
-        </a>
-
-        <a href="#" class="platform-btn">
-          <div class="platform-icon" style="background:#C8820A22;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M4 4h16v16H4z" fill="none" stroke="#C8820A" stroke-width="1.5" rx="3"/>
-              <circle cx="12" cy="12" r="3" fill="#C8820A"/>
-            </svg>
-          </div>
-          <div>
-            <div class="platform-name">RSS / Other</div>
-            <div class="platform-action">All apps &rarr;</div>
-          </div>
-        </a>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================================================
-       CLOSING CTA
-  =================================================== -->
-  <section id="cta">
-    <div class="cta-glow"></div>
-    <div class="container cta-inner reveal">
-      <h2 class="cta-title">NO<br>PERMISSION</h2>
-      <p class="cta-sub">
-        The stories are unfinished, the traction is real, and nobody's heard of them yet — and you're hearing them now.
-      </p>
-      <a href="#listen" class="btn-primary">Hear Their Stories</a>
     </div>
   </section>
 
@@ -1173,12 +913,12 @@
       <div class="footer-inner">
         <div class="footer-logo">NO<span>.</span>PERMISSION</div>
         <ul class="footer-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#season">Episodes</a></li>
-          <li><a href="#host">Host</a></li>
-          <li><a href="#listen">Listen</a></li>
+          <li><a href="#hero">Home</a></li>
+          <li><a href="#overview">About</a></li>
+          <li><a href="#expect">Season 1</a></li>
+          <li><a href="mailto:daniel@nopermissionpodcast.com">Contact</a></li>
         </ul>
-        <p class="footer-copy">&copy; 2024 No Permission Podcast. All rights reserved.</p>
+        <p class="footer-copy">&copy; 2025 No Permission Podcast. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -1193,9 +933,8 @@
           }
         });
       },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
-
     document.querySelectorAll('.reveal, .stagger').forEach(el => observer.observe(el));
   </script>
 </body>
