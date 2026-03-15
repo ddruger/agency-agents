@@ -151,6 +151,13 @@
       .nav-links { display: none; }
     }
 
+    @media (max-width: 480px) {
+      .hero-title {
+        white-space: normal;
+        word-break: break-word;
+      }
+    }
+
     /* ============================================================
        SECTION 1 — HERO
     ============================================================ */
@@ -855,12 +862,18 @@
         [192, 160, 96],  // pale-gold
       ];
 
-      let W, H, pts;
+      let W, H, pts, dpr;
 
       function resize() {
-        W = canvas.width  = canvas.offsetWidth;
-        H = canvas.height = canvas.offsetHeight;
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = canvas.offsetWidth;
+        H = canvas.offsetHeight;
+        canvas.width  = W * dpr;
+        canvas.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
+
+      const isMobile = () => window.innerWidth <= 768;
 
       function mkPt() {
         const c = COLORS[Math.floor(Math.random() * COLORS.length)];
@@ -868,10 +881,12 @@
           x:  Math.random() * W,
           y:  Math.random() * H,
           r:  Math.random() * 1.4 + 0.3,
-          vx: (Math.random() - 0.5) * 0.15,
-          vy: (Math.random() - 0.5) * 0.10 - 0.025,
+          // ~10% faster initial velocities
+          vx: (Math.random() - 0.5) * 0.165,
+          vy: (Math.random() - 0.5) * 0.11 - 0.028,
           phase:  Math.random() * Math.PI * 2,
-          pSpeed: 0.003 + Math.random() * 0.005,
+          // ~10% faster phase cycling
+          pSpeed: 0.0033 + Math.random() * 0.0055,
           base:   0.07  + Math.random() * 0.22,
           c,
         };
@@ -879,18 +894,20 @@
 
       function init() {
         resize();
-        pts = Array.from({ length: 120 }, mkPt);
+        // Fewer particles on mobile for performance
+        const count = isMobile() ? 70 : 140;
+        pts = Array.from({ length: count }, mkPt);
       }
 
       function tick() {
         ctx.clearRect(0, 0, W, H);
         for (const p of pts) {
-          // Brownian nudge
-          p.vx += (Math.random() - 0.5) * 0.025;
-          p.vy += (Math.random() - 0.5) * 0.025;
-          // Soft dampen
-          p.vx *= 0.97;
-          p.vy *= 0.97;
+          // Larger Brownian nudge = more wandering area
+          p.vx += (Math.random() - 0.5) * 0.038;
+          p.vy += (Math.random() - 0.5) * 0.038;
+          // Slightly less damping so particles drift further
+          p.vx *= 0.978;
+          p.vy *= 0.978;
           p.x  += p.vx;
           p.y  += p.vy;
           p.phase += p.pSpeed;
